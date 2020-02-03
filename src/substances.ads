@@ -4,7 +4,7 @@ package Substances is
    subtype Percent is Positive range 1..100;
    type Level is (Low, Medium, High);
    type Substance_Names is (Cocaine, Heroin, Molly, Marijuana, Jenkem, Crystal_Meth,
-                           Ketamine, LSD, Shrooms, Adderall, Xanax, PCP);
+                           Ketamine, LSD, Shrooms, Adderall, Vicodin, PCP);
 
    type Substance is private;
 
@@ -25,9 +25,9 @@ private
       record
          Name: Unbounded_String;
          Base_Price: Positive;
-         Risk: Percent;
-         Demand: Level;
-         Supply: Level;
+         Risk: Percent := 0;
+         Demand: Level := Medium;
+         Supply: Level := Medium;
       end record;
 
 end Substances;
