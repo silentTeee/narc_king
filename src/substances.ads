@@ -1,7 +1,7 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 package Substances is
-   subtype Percent is Positive range 1..100;
+   subtype Percent is Natural range 0..100;
    type Level is (Low, Medium, High);
    type Substance_Names is (Cocaine, Heroin, Molly, Marijuana, Jenkem, Crystal_Meth,
                            Ketamine, LSD, Shrooms, Adderall, Vicodin, PCP);
@@ -25,9 +25,9 @@ private
       record
          Name: Unbounded_String;
          Base_Price: Positive;
-         Risk: Percent := 0;
-         Demand: Level := Medium;
-         Supply: Level := Medium;
+         Risk: Percent;
+         Demand: Level;
+         Supply: Level;
       end record;
 
 end Substances;
