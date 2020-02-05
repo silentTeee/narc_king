@@ -56,11 +56,11 @@ package body Substances is
       begin
          case (Weight_Level) is
             when Low =>
-               Weight := Random_Low_Weights.Random(Low_Gen);
+               Weight := Random(Low_Gen);
             when Medium =>
-               Weight := Random_Medium_Weights.Random(Med_Gen);
+               Weight := Random(Med_Gen);
             when High =>
-               Weight := Random_High_Weights.Random(High_Gen);
+               Weight := Random(High_Gen);
          end case;
          return Weight;
       end Get_Random_Weight;
@@ -71,6 +71,9 @@ package body Substances is
       return Substances(Drug).Base_Price * Demand_Weight * Supply_Weight / 10_000;
    end Get_Market_Rate;
 begin
+   Reset(Low_Gen);
+   Reset(Med_Gen);
+   Reset(High_Gen);
    Substances := (
                   (Name => To_Unbounded_String("Cocaine"),
                    Base_Price => 35,
