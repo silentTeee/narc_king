@@ -6,8 +6,6 @@ package Substances is
    type Substance_Names is (Cocaine, Heroin, Molly, Marijuana, Jenkem, Crystal_Meth,
                            Ketamine, LSD, Shrooms, Adderall, Vicodin, PCP);
 
-   type Substance is private;
-
    function Get_Name (Drug: in Substance_Names) return Unbounded_String;
 
    function Get_Risk (Drug: in Substance_Names) return Percent;
@@ -20,15 +18,6 @@ package Substances is
    procedure Set_Supply (Drug: in Substance_Names; New_Val: Level);
 
    function Get_Market_Rate (Drug: in Substance_Names) return Positive;
-private
-   type Substance is
-      record
-         Name: Unbounded_String;
-         Base_Price: Positive;
-         Risk: Percent;
-         Demand: Level;
-         Supply: Level;
-      end record;
 
 end Substances;
 

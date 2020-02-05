@@ -13,6 +13,15 @@ package body Substances is
    Low_Gen: Random_Low_Weights.Generator;
    Med_Gen: Random_Medium_Weights.Generator;
    High_Gen: Random_High_Weights.Generator;
+
+   type Substance is
+      record
+         Name: Unbounded_String;
+         Base_Price: Positive;
+         Risk: Percent;
+         Demand: Level;
+         Supply: Level;
+      end record;
    Substances: array (Substance_Names) of Substance;
 
    function Get_Name (Drug: in Substance_Names) return Unbounded_String is
@@ -78,62 +87,50 @@ begin
                   (Name => To_Unbounded_String("Cocaine"),
                    Base_Price => 35,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Heroin"),
                    Base_Price => 40,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Molly"),
                    Base_Price =>  25,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Marijuana"),
                    Base_Price => 15,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Jenkem"),
                    Base_Price => 10,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Crystal Meth"),
                    Base_Price => 20,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Ketamine"),
                    Base_Price => 15,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("LSD"),
                    Base_Price => 25,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Shrooms"),
                    Base_Price => 20,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Adderall"),
                    Base_Price => 10,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("Vicodin"),
                    Base_Price => 10,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium),
+                   others => Medium),
                   (Name => To_Unbounded_String("PCP"),
                    Base_Price => 25,
                    Risk => 0,
-                   Demand => Medium,
-                   Supply => Medium)
+                   others => Medium)
                  );
 end Substances;
