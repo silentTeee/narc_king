@@ -8,6 +8,7 @@ package Player is
    procedure Subtract_From_Inventory (Drug: in Substance_Names; Amount: in Positive);
 
    procedure Add_To_Tools (Tool: in Tool_Names; Amount: in Positive);
+   procedure Subtract_From_Tools (Tool: in Tool_Names; Amount: in Positive);
 
    procedure Add_To_Debt (Debt_Amount: Positive);
    procedure Subtract_From_Debt (Payment_Amount: Positive);
