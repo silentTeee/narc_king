@@ -1,6 +1,5 @@
 with Ada.Numerics.Discrete_Random; use Ada.Numerics;
-
-package body Substances is
+package body Drug_Market is
    subtype Low_Range is Positive range 40 .. 79;
    subtype Medium_Range is Positive range 80 .. 120;
    subtype High_Range is Positive range 121 .. 160;
@@ -133,4 +132,4 @@ begin
                    Risk => 0,
                    others => Medium)
                  );
-end Substances;
+end Drug_Market;
