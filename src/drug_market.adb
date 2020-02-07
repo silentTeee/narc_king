@@ -13,7 +13,7 @@ package body Drug_Market is
    Med_Gen: Random_Medium_Weights.Generator;
    High_Gen: Random_High_Weights.Generator;
 
-   type Substance is
+   type Substance_Entry is
       record
          Name: Unbounded_String;
          Base_Price: Positive;
@@ -21,44 +21,44 @@ package body Drug_Market is
          Demand: Level;
          Supply: Level;
       end record;
-   Substances: array (Substance_Names) of Substance;
+   Substances: array (Substance) of Substance_Entry;
 
-   function Get_Name (Drug: in Substance_Names) return Unbounded_String is
+   function Get_Name (Drug: in Substance) return Unbounded_String is
    begin
       return Substances (Drug).Name;
    end Get_Name;
 
-   function Get_Risk (Drug: in Substance_Names) return Percent is
+   function Get_Risk (Drug: in Substance) return Percent is
    begin
       return Substances(Drug).Risk;
    end Get_Risk;
 
-   procedure Set_Risk (Drug: in Substance_Names; New_Val: Percent) is
+   procedure Set_Risk (Drug: in Substance; New_Val: Percent) is
    begin
       Substances(Drug).Risk := New_Val;
    end Set_Risk;
 
-   function Get_Demand (Drug: in Substance_Names) return Level is
+   function Get_Demand (Drug: in Substance) return Level is
    begin
       return Substances(Drug).Demand;
    end Get_Demand;
 
-   procedure Set_Demand (Drug: in Substance_Names; New_Val: Level) is
+   procedure Set_Demand (Drug: in Substance; New_Val: Level) is
    begin
       Substances(Drug).Demand := New_Val;
    end Set_Demand;
 
-   function Get_Supply (Drug: in Substance_Names) return Level is
+   function Get_Supply (Drug: in Substance) return Level is
    begin
       return Substances(Drug).Supply;
    end Get_Supply;
 
-   procedure Set_Supply (Drug: in Substance_Names; New_Val: Level) is
+   procedure Set_Supply (Drug: in Substance; New_Val: Level) is
    begin
       Substances(Drug).Supply := New_Val;
    end Set_Supply;
 
-   function Get_Market_Rate (Drug: in Substance_Names) return Positive is
+   function Get_Market_Rate (Drug: in Substance) return Positive is
       function Get_Random_Weight(Weight_Level: in Level) return Positive is
          Weight: Positive;
       begin

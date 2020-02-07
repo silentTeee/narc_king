@@ -1,20 +1,20 @@
 package body Player is
-   Inventory_List: array (Substance_Names) of Natural range 0 .. 100 := (others => 0);
+   Inventory_List: array (Substance) of Natural range 0 .. 100 := (others => 0);
    Tool_List: array (Tool_Names) of Natural range 0 .. 10 := (others => 0);
    Player_Debt: Natural := 0;
    Player_Balance: Natural := 0;
 
-   function Inventory_Substance_Count (Drug: in Substance_Names) return Natural is
+   function Inventory_Substance_Count (Drug: in Substance) return Natural is
    begin
       return Inventory_List (Drug);
    end Inventory_Substance_Count;
 
-   procedure Add_To_Inventory (Drug: in Substance_Names; Amount: in Positive) is
+   procedure Add_To_Inventory (Drug: in Substance; Amount: in Positive) is
    begin
       Inventory_List (Drug) := Inventory_List (Drug) + Amount;
    end Add_To_Inventory;
 
-   procedure Subtract_From_Inventory (Drug: in Substance_Names; Amount: in Positive) is
+   procedure Subtract_From_Inventory (Drug: in Substance; Amount: in Positive) is
    begin
       Inventory_List (Drug) := Inventory_List (Drug) - Amount;
    end Subtract_From_Inventory;

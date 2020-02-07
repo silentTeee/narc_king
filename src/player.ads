@@ -1,10 +1,10 @@
-with Substances; use Substances;
+with Drug_Market; use type Drug_Market.Substance;
 package Player is
    type Tool_Names is (Bullet, Bulletproof_Vest);
 
-   function Inventory_Substance_Count (Drug: in Substance_Names) return Natural;
-   procedure Add_To_Inventory (Drug: in Substance_Names; Amount: in Positive);
-   procedure Subtract_From_Inventory (Drug: in Substance_Names; Amount: in Positive);
+   function Inventory_Substance_Count (Drug: in Substance) return Natural;
+   procedure Add_To_Inventory (Drug: in Substance; Amount: in Positive);
+   procedure Subtract_From_Inventory (Drug: in Substance; Amount: in Positive);
 
    function Get_Tool_Count (Tool: in Tool_Names) return Natural;
    procedure Add_To_Tools (Tool: in Tool_Names; Amount: in Positive);
