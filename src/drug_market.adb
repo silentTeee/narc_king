@@ -59,22 +59,30 @@ package body Drug_Market is
    end Set_Supply;
 
    function Get_Market_Rate (Drug: in Substance) return Positive is
-      function Get_Random_Weight(Weight_Level: in Level) return Positive is
+      function Get_Random_Supply_Weight(Weight_Level: in Level) return Positive is
          Weight: Positive;
       begin
          case (Weight_Level) is
-            when Low =>
-               Weight := Random(Low_Gen);
-            when Medium =>
-               Weight := Random(Med_Gen);
-            when High =>
-               Weight := Random(High_Gen);
+            when Low => Weight := Random(High_Gen);
+            when Medium => Weight := Random(Med_Gen);
+            when High => Weight := Random(Low_Gen);
          end case;
          return Weight;
-      end Get_Random_Weight;
+      end Get_Random_Supply_Weight;
 
-      Demand_Weight: Positive := Get_Random_Weight(Substances(Drug).Demand);
-      Supply_Weight: Positive := Get_Random_Weight(Substances(Drug).Supply);
+      function Get_Random_Demand_Weight(Weight_Level: in Level) return Positive is
+         Weight: Positive;
+      begin
+         case (Weight_Level) is
+            when Low => Weight := Random(Low_Gen);
+            when Medium => Weight := Random(Med_Gen);
+            when High => Weight := Random(High_Gen);
+         end case;
+         return Weight;
+      end Get_Random_Demand_Weight;
+
+      Demand_Weight: Positive := Get_Random_Demand_Weight(Substances(Drug).Demand);
+      Supply_Weight: Positive := Get_Random_Supply_Weight(Substances(Drug).Supply);
    begin
       return Substances(Drug).Base_Price * Demand_Weight * Supply_Weight / 10_000;
    end Get_Market_Rate;
