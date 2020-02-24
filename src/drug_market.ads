@@ -8,6 +8,10 @@ package Drug_Market is
 
    function Get_Name (Drug: in Substance) return Unbounded_String;
 
+   function Get_Drug_Count (Drug: in Substance) return Natural;
+   function Take_Drugs (Drug: in Substance; Withdraw_Amount: in Positive) return Natural;
+   function Give_Drugs (Drug: in Substance; Deposit_Amount: in Positive) return Positive;
+
    function Get_Risk (Drug: in Substance) return Percent;
    procedure Set_Risk (Drug: in Substance; New_Val: Percent);
 
