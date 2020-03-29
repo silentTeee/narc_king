@@ -9,12 +9,19 @@ package body Narc_King_Game is
    package Random_Low_Weights is new Discrete_Random(Low_Range);
    package Random_Medium_Weights is new Discrete_Random(Medium_Range);
    package Random_High_Weights is new Discrete_Random(High_Range);
+   package Random_Substances is new Discrete_Random(Substance);
+   package Rand_Int is new Discrete_Random(Integer);
+   use Rand_Int;
+   use Random_Substances;
    use Random_Low_Weights;
    use Random_Medium_Weights;
    use Random_High_Weights;
    Low_Gen: Random_Low_Weights.Generator;
    Med_Gen: Random_Medium_Weights.Generator;
    High_Gen: Random_High_Weights.Generator;
+   Drug_Gen: Random_Substances.Generator;
+   Int_Gen: Rand_Int.Generator;
+
 
    type Substance_Entry is
       record
@@ -36,7 +43,9 @@ package body Narc_King_Game is
 
    --INTERNAL HELPER FUNCTIONS------------------------------------------------------------
 
-   function Calculate_Market_Rate (Drug: in Substance) return Positive is
+   function Calculate_Market_Rate (Drug: in Substance;
+                                   Supply_Level: in Level;
+                                   Demand_Level: in Level) return Positive is
       --Determine the market rate for a drug based on its specified supply & demand levels
       function Get_Random_Supply_Weight(Weight_Level: in Level) return Positive is
          Weight: Positive;
@@ -60,8 +69,8 @@ package body Narc_King_Game is
          return Weight;
       end Get_Random_Demand_Weight;
 
-      Demand_Weight: Positive := Get_Random_Demand_Weight(Market_Substances(Drug).Demand);
-      Supply_Weight: Positive := Get_Random_Supply_Weight(Market_Substances(Drug).Supply);
+      Demand_Weight: Positive := Get_Random_Demand_Weight(Demand_Level);
+      Supply_Weight: Positive := Get_Random_Supply_Weight(Supply_Level);
    begin
       return Market_Substances(Drug).Base_Price * Demand_Weight * Supply_Weight / 10_000;
    end Calculate_Market_Rate;
@@ -73,108 +82,143 @@ package body Narc_King_Game is
       Reset(Low_Gen);
       Reset(Med_Gen);
       Reset(High_Gen);
+      Reset(Drug_Gen);
+      Reset(Int_Gen);
       Player_Substances := (others => 0);
       Player_Tools := (others => False);
       Player_Debt := 500;
       Player_Balance := 500;
-      Market_Substances := (
-                     (Name => To_Unbounded_String("Cocaine"),
-                      Base_Price => 35,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Heroin"),
-                      Base_Price => 40,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Molly"),
-                      Base_Price =>  25,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Marijuana"),
-                      Base_Price => 15,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Jenkem"),
-                      Base_Price => 10,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Crystal Meth"),
-                      Base_Price => 20,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Ketamine"),
-                      Base_Price => 15,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("LSD"),
-                      Base_Price => 25,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Shrooms"),
-                      Base_Price => 20,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Adderall"),
-                      Base_Price => 10,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("Vicodin"),
-                      Base_Price => 10,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium),
-                     (Name => To_Unbounded_String("PCP"),
-                      Base_Price => 25,
-                      Market_Price => 1,
-                      Risk => 0,
-                      Quantity => 25,
-                      Available => False,
-                      others => Medium)
-                    );
+      Market_Substances := (Cocaine =>
+                              (Name => To_Unbounded_String("Cocaine"),
+                               Base_Price => 35,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Heroin =>
+                              (Name => To_Unbounded_String("Heroin"),
+                               Base_Price => 40,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Molly =>
+                              (Name => To_Unbounded_String("Molly"),
+                               Base_Price =>  25,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Marijuana =>
+                              (Name => To_Unbounded_String("Marijuana"),
+                               Base_Price => 15,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Jenkem =>
+                              (Name => To_Unbounded_String("Jenkem"),
+                               Base_Price => 10,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Crystal_Meth =>
+                              (Name => To_Unbounded_String("Crystal Meth"),
+                               Base_Price => 20,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Ketamine =>
+                              (Name => To_Unbounded_String("Ketamine"),
+                               Base_Price => 15,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            LSD =>
+                              (Name => To_Unbounded_String("LSD"),
+                               Base_Price => 25,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Shrooms =>
+                              (Name => To_Unbounded_String("Shrooms"),
+                               Base_Price => 20,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Adderall =>
+                              (Name => To_Unbounded_String("Adderall"),
+                               Base_Price => 10,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            Vicodin =>
+                              (Name => To_Unbounded_String("Vicodin"),
+                               Base_Price => 10,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium),
+                            PCP =>
+                              (Name => To_Unbounded_String("PCP"),
+                               Base_Price => 25,
+                               Market_Price => 1,
+                               Risk => 0,
+                               Quantity => 25,
+                               Available => False,
+                               others => Medium));
    end Start_Game;
 
-   function Change_City return Available_Drugs is
-      Drug_Options: Available_Drugs := (others => False);
+   procedure Change_City(Drug_Options: out Available_Drugs) is
+      New_Idx: Integer;
+      Temp_Drug: Substance;
+      Drug_List: array (Natural range Substance'Pos(Substance'First)..
+                          Substance'Pos(Substance'Last)) of Substance;
    begin
-      for I in Substance loop
-         --TODO: Create a random generator for determining which drugs will be available
-         if Market_Substances(I).Available = True then
-            Market_Substances(I).Market_Price := Calculate_Market_Rate(I);
+      --create a random shuffle of the substances
+      for I in Drug_List'Range loop
+         Drug_List(I) := Substance'Val(I);
+      end loop;
+      for Old_Idx in reverse Drug_List'Range loop
+         New_Idx := (Random(Int_Gen) mod Old_Idx);
+         Temp_Drug := Drug_List(Old_Idx);
+         Drug_List(Old_Idx) := Drug_List(New_Idx);
+         Drug_List(New_Idx) := Temp_Drug;
+      end loop;
+      --Pick 4 of the substances to be made available in the new city, and update their
+      --stats
+      for I in Drug_List'Range loop
+         if I < Drug_List'First + 4 then
+            Drug_Options(Drug_List(I)) := True;
+            Market_Substances(Drug_List(I)).Available := Drug_Options(Drug_List(I));
+            Market_Substances(Drug_List(I)).Market_Price :=
+              Calculate_Market_Rate(Drug_List(I),
+                                    Market_Substances(Drug_List(I)).Supply,
+                                    Market_Substances(Drug_List(I)).Demand);
+            --TODO: incorporate supply, demand, and risk calculation!
+         else
+            Drug_Options(Drug_List(I)) := False;
+            Market_Substances(Drug_List(I)).Available := Drug_Options(Drug_List(I));
+            Market_Substances(Drug_List(I)).Market_Price := 1;
          end if;
       end loop;
-      return Drug_Options;
    end Change_City;
 
    procedure Buy_Drug (Drug: in Substance;
@@ -186,15 +230,16 @@ package body Narc_King_Game is
       Old_Player_Amount: Natural := Player_Substances(Drug);
       Old_Player_Balance: Natural := Player_Balance;
    begin
-      Player_Balance := Player_Balance - Market_Substances(Drug).Market_Price;
-      Market_Substances(Drug).Quantity := Market_Substances(Drug).Quantity - Purchase_Quantity;
-      Player_Substances(Drug) := Player_Substances(Drug) + Purchase_Quantity *
+      Player_Balance := Player_Balance - Purchase_Quantity *
         Market_Substances(Drug).Market_Price;
+      Market_Substances(Drug).Quantity := Market_Substances(Drug).Quantity -
+        Purchase_Quantity;
+      Player_Substances(Drug) := Player_Substances(Drug) + Purchase_Quantity;
       Remaining_In_Market := Market_Substances(Drug).Quantity;
       Inventory_Quantity := Player_Substances(Drug);
       --TODO: Add logic to determine whether a fight was triggered.
    exception
-      when Constraint_Error =>
+      when others =>
          Market_Substances(Drug).Quantity := Old_Market_Amount;
          Player_Substances(Drug) := Old_Player_Amount;
          Player_Balance := Old_Player_Balance;
@@ -206,12 +251,24 @@ package body Narc_King_Game is
                         Remaining_In_Market: out Positive;
                         Inventory_Quantity: out Natural;
                         Fight_Triggered: out Boolean) is
+      Old_Market_Amount: Natural := Market_Substances(Drug).Quantity;
+      Old_Player_Amount: Natural := Player_Substances(Drug);
+      Old_Player_Balance: Natural := Player_Balance;
    begin
-      Market_Substances(Drug).Quantity := Market_Substances(Drug).Quantity - Sell_Quantity;
-      Player_Substances(Drug) := Player_Substances(Drug) + Sell_Quantity;
+      Player_Balance := Player_Balance + Sell_Quantity *
+        Market_Substances(Drug).Market_Price;
+      Market_Substances(Drug).Quantity := Market_Substances(Drug).Quantity +
+        Sell_Quantity;
+      Player_Substances(Drug) := Player_Substances(Drug) - Sell_Quantity;
       Remaining_In_Market := Market_Substances(Drug).Quantity;
       Inventory_Quantity := Player_Substances(Drug);
       --TODO: Add logic to determine whether a fight was triggered.
+   exception
+      when others =>
+         Market_Substances(Drug).Quantity := Old_Market_Amount;
+         Player_Substances(Drug) := Old_Player_Amount;
+         Player_Balance := Old_Player_Balance;
+         raise;
    end Sell_Drug;
 
    function Select_Fight_Choice (Choice: in Fight_Choice)

@@ -11,7 +11,7 @@ package Narc_King_Game is
    procedure Start_Game;
    --This initiates the game
 
-   function Change_City return Available_Drugs;
+   procedure Change_City(Drug_Options: out Available_Drugs);
    --Changes the city you're in, and randomly selects the drugs that are available,
    --The amounts that are available, their price, etc.
 
