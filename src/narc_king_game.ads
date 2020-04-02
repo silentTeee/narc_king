@@ -39,7 +39,6 @@ package Narc_King_Game is
 
    procedure Buy_Tool (Tool_To_Buy: in Tool);
    --Purchase a tool that improves the player's chances in a fight.
-   --TODO: create a "black market" for buying tools and getting/paying off loans.
 
    function Get_Loan (Loan_Size: in Positive) return Positive;
    --Allow the player to get a loan, returns the new loan remainder

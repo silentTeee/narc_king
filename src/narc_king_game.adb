@@ -2,6 +2,7 @@ with Ada.Numerics.Discrete_Random; use Ada.Numerics;
 package body Narc_King_Game is
 
    --INTERNAL TYPES AND DATA -------------------------------------------------------------
+
    subtype Percent is Natural range 0..100;
    type Level is (Low, Medium, High);
    subtype Low_Range is Positive range 40 .. 79;
