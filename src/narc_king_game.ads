@@ -2,6 +2,7 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 package Narc_King_Game is
 
    --GAME FLOW FUNCTIONS-------------------------------------------------------------------
+
    type Fight_Choice is (Run, Fight);
    type Fight_Outcome is (Died, Won, Escaped);
    type Substance is (Cocaine, Heroin, Molly, Marijuana, Jenkem, Crystal_Meth,
