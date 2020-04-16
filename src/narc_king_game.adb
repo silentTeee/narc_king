@@ -329,8 +329,10 @@ package body Narc_King_Game is
                end case;
                if Random(Int_Gen) mod 101 < Death_Chance then
                   Outcome := Died;
+                  Current_Game_State := Not_In_Game;
                else
                   Outcome := Escaped;
+                  Current_Game_State := Free_Roam;
                end if;
             when Fight =>
                case Player_Tools(Bullet_Magazine) is
@@ -339,8 +341,10 @@ package body Narc_King_Game is
                end case;
                if Random(Int_Gen) mod 101 < Death_Chance then
                   Outcome := Died;
+                  Current_Game_State := Not_In_Game;
                else
                   Outcome := Won;
+                  Current_Game_State := Free_Roam;
                end if;
             end case;
          when others =>
