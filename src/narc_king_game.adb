@@ -12,8 +12,10 @@ package body Narc_King_Game is
    package Random_Medium_Weights is new Discrete_Random(Medium_Range);
    package Random_High_Weights is new Discrete_Random(High_Range);
    package Random_Substances is new Discrete_Random(Substance);
-   package Rand_Int is new Discrete_Random(Integer);
-   use Rand_Int;
+   package Random_Int is new Discrete_Random(Integer);
+   package Random_Level is new Discrete_Random(Level);
+   use Random_Level;
+   use Random_Int;
    use Random_Substances;
    use Random_Low_Weights;
    use Random_Medium_Weights;
@@ -22,7 +24,8 @@ package body Narc_King_Game is
    Med_Gen: Random_Medium_Weights.Generator;
    High_Gen: Random_High_Weights.Generator;
    Drug_Gen: Random_Substances.Generator;
-   Int_Gen: Rand_Int.Generator;
+   Int_Gen: Random_Int.Generator;
+   Lvl_Gen: Random_Level.Generator;
 
    type Game_State is (Not_In_Game, Game_Started, Free_Roam, In_Fight);
    Current_Game_State: Game_State := Not_In_Game;
@@ -91,6 +94,7 @@ package body Narc_King_Game is
             Reset(High_Gen);
             Reset(Drug_Gen);
             Reset(Int_Gen);
+            Reset(Lvl_Gen);
             Player_Substances := (others => 0);
             Player_Tools := (others => False);
             Player_Debt := 500;
@@ -219,13 +223,18 @@ package body Narc_King_Game is
             --stats
             for I in Drug_List'Range loop
                if I < Drug_List'First + 4 then
+                  --TODO: rework game flow to incorporate levels and gradual increase in
+                  --difficulty. It's totally random and horribly unbalanced right now. :P
                   Drug_Options(Drug_List(I)) := True;
                   Market_Substances(Drug_List(I)).Available := Drug_Options(Drug_List(I));
+                  Market_Substances(Drug_List(I)).Supply := Random(Lvl_Gen);
+                  Market_Substances(Drug_List(I)).Demand := Random(Lvl_Gen);
+                  Market_Substances(Drug_List(I)).Risk := Random(Int_Gen) mod 75;
+                  Market_Substances(Drug_List(I)).Quantity := Random(Int_Gen) mod 40;
                   Market_Substances(Drug_List(I)).Market_Price :=
                     Calculate_Market_Rate(Drug_List(I),
                                           Market_Substances(Drug_List(I)).Supply,
                                           Market_Substances(Drug_List(I)).Demand);
-                  --TODO: incorporate supply, demand, and risk calculation!
                else
                   Drug_Options(Drug_List(I)) := False;
                   Market_Substances(Drug_List(I)).Available := Drug_Options(Drug_List(I));
