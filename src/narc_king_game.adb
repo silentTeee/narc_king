@@ -5,6 +5,7 @@ package body Narc_King_Game is
 
    subtype Percent is Natural range 0..100;
    type Level is (Low, Medium, High);
+   type Game_Level is new Natural range 0 .. 50;
    subtype Low_Range is Positive range 40 .. 79;
    subtype Medium_Range is Positive range 80 .. 120;
    subtype High_Range is Positive range 121 .. 160;
@@ -27,8 +28,9 @@ package body Narc_King_Game is
    Int_Gen: Random_Int.Generator;
    Lvl_Gen: Random_Level.Generator;
 
-   type Game_State is (Not_In_Game, Game_Started, Free_Roam, In_Fight);
-   Current_Game_State: Game_State := Not_In_Game;
+   type Game_State is (Pre_Game, Game_Started, Free_Roam, In_Fight, Game_Over);
+   Current_Game_State: Game_State := Pre_Game;
+   Current_Level: Natural;
    Wrong_Call_State_Exception: exception;
 
    type Substance_Entry is
@@ -88,13 +90,14 @@ package body Narc_King_Game is
    procedure Start_Game is
    begin
       case Current_Game_State is
-         when Not_In_Game =>
+         when Pre_Game | Game_Over =>
             Reset(Low_Gen);
             Reset(Med_Gen);
             Reset(High_Gen);
             Reset(Drug_Gen);
             Reset(Int_Gen);
             Reset(Lvl_Gen);
+            Current_Level := 0;
             Player_Substances := (others => 0);
             Player_Tools := (others => False);
             Player_Debt := 500;
@@ -209,40 +212,45 @@ package body Narc_King_Game is
    begin
       case Current_Game_State is
          when Game_Started | Free_Roam =>
-            --create a random shuffle of the substances
-            for I in Drug_List'Range loop
-               Drug_List(I) := Substance'Val(I);
-            end loop;
-            for Old_Idx in reverse Drug_List'Range loop
-               New_Idx := (Random(Int_Gen) mod Old_Idx);
-               Temp_Drug := Drug_List(Old_Idx);
-               Drug_List(Old_Idx) := Drug_List(New_Idx);
-               Drug_List(New_Idx) := Temp_Drug;
-            end loop;
-            --Pick 4 of the substances to be made available in the new city, and update their
-            --stats
-            for I in Drug_List'Range loop
-               if I < Drug_List'First + 4 then
-                  --TODO: rework game flow to incorporate levels and gradual increase in
-                  --difficulty. It's totally random and horribly unbalanced right now. :P
-                  Drug_Options(Drug_List(I)) := True;
-                  Market_Substances(Drug_List(I)).Available := Drug_Options(Drug_List(I));
-                  Market_Substances(Drug_List(I)).Supply := Random(Lvl_Gen);
-                  Market_Substances(Drug_List(I)).Demand := Random(Lvl_Gen);
-                  Market_Substances(Drug_List(I)).Risk := Random(Int_Gen) mod 75;
-                  Market_Substances(Drug_List(I)).Quantity := Random(Int_Gen) mod 40;
-                  Market_Substances(Drug_List(I)).Market_Price :=
-                    Calculate_Market_Rate(Drug_List(I),
-                                          Market_Substances(Drug_List(I)).Supply,
-                                          Market_Substances(Drug_List(I)).Demand);
-               else
-                  Drug_Options(Drug_List(I)) := False;
-                  Market_Substances(Drug_List(I)).Available := Drug_Options(Drug_List(I));
-                  Market_Substances(Drug_List(I)).Market_Price := 1;
+            Current_Level := Current_Level + 1;
+            if Current_Level <= 50 then
+               --create a random shuffle of the substances
+               for I in Drug_List'Range loop
+                  Drug_List(I) := Substance'Val(I);
+               end loop;
+               for Old_Idx in reverse Drug_List'Range loop
+                  New_Idx := (Random(Int_Gen) mod Old_Idx);
+                  Temp_Drug := Drug_List(Old_Idx);
+                  Drug_List(Old_Idx) := Drug_List(New_Idx);
+                  Drug_List(New_Idx) := Temp_Drug;
+               end loop;
+               --Pick 4 of the substances to be made available in the new city, and update their
+               --stats
+               for I in Drug_List'Range loop
+                  if I < Drug_List'First + 4 then
+                     --TODO: rework game flow to incorporate levels and gradual increase in
+                     --difficulty. It's totally random and horribly unbalanced right now. :P
+                     Drug_Options(Drug_List(I)) := True;
+                     Market_Substances(Drug_List(I)).Available := Drug_Options(Drug_List(I));
+                     Market_Substances(Drug_List(I)).Supply := Random(Lvl_Gen);
+                     Market_Substances(Drug_List(I)).Demand := Random(Lvl_Gen);
+                     Market_Substances(Drug_List(I)).Risk := Random(Int_Gen) mod 75;
+                     Market_Substances(Drug_List(I)).Quantity := Random(Int_Gen) mod 40;
+                     Market_Substances(Drug_List(I)).Market_Price :=
+                      Calculate_Market_Rate(Drug_List(I),
+                                            Market_Substances(Drug_List(I)).Supply,
+                                            Market_Substances(Drug_List(I)).Demand);
+                  else
+                     Drug_Options(Drug_List(I)) := False;
+                     Market_Substances(Drug_List(I)).Available := Drug_Options(Drug_List(I));
+                     Market_Substances(Drug_List(I)).Market_Price := 1;
+                  end if;
+               end loop;
+               if Current_Game_State = Game_Started then
+                  Current_Game_State := Free_Roam;
                end if;
-            end loop;
-            if Current_Game_State = Game_Started then
-               Current_Game_State := Free_Roam;
+            else
+               Current_Game_State := Game_Over;
             end if;
          when others =>
             raise Wrong_Call_State_Exception;
@@ -333,24 +341,24 @@ package body Narc_King_Game is
             case Choice is
             when Run =>
                case Player_Tools(Bulletproof_Vest) is
-               when True => Death_Chance := 25;
-               when False => Death_Chance := 50;
+                  when True => Death_Chance := 25;
+                  when False => Death_Chance := 50;
                end case;
                if Random(Int_Gen) mod 101 < Death_Chance then
                   Outcome := Died;
-                  Current_Game_State := Not_In_Game;
+                  Current_Game_State := Game_Over;
                else
                   Outcome := Escaped;
                   Current_Game_State := Free_Roam;
                end if;
             when Fight =>
                case Player_Tools(Bullet_Magazine) is
-               when True => Death_Chance := 25;
-               when False => Death_Chance := 50;
+                  when True => Death_Chance := 25;
+                  when False => Death_Chance := 50;
                end case;
                if Random(Int_Gen) mod 101 < Death_Chance then
                   Outcome := Died;
-                  Current_Game_State := Not_In_Game;
+                  Current_Game_State := Game_Over;
                else
                   Outcome := Won;
                   Current_Game_State := Free_Roam;
